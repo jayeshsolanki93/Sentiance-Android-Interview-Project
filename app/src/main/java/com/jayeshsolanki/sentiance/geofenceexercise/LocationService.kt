@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.SharedPreferences
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.media.RingtoneManager
@@ -35,9 +36,6 @@ class LocationService : JobService() {
 
     private var currentBestLocation: Location? = null
 
-    private var isGPSEnabled = false
-    private var isNetworkEnabled = false
-
     override fun onStopJob(job: JobParameters?): Boolean {
         return false
     }
@@ -62,40 +60,16 @@ class LocationService : JobService() {
      */
     @SuppressLint("MissingPermission")
     private fun getLocation() {
+        locationListener = LocationListener(this)
         locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        isGPSEnabled = locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER)
-        isNetworkEnabled = locationManager
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        val criteria = Criteria()
+        criteria.accuracy = Criteria.ACCURACY_FINE // for adequate accuracy
+        criteria.powerRequirement = Criteria.POWER_HIGH // consumes battery more
+        criteria.isCostAllowed = true // use data packets for better location
 
-        if (!isGPSEnabled && !isNetworkEnabled) {
-            // no network provider is enabled
-        } else {
-            var newLocation: Location? = null
-            // First get location from Network Provider
-            if (isNetworkEnabled) {
-                locationListener = LocationListener(applicationContext)
-                locationManager.
-                        requestLocationUpdates(
-                                LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                                locationListener, Looper.getMainLooper())
-                Log.d(TAG, "Network is enabled")
-                newLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            }
-            // if GPS Enabled get lat/long using GPS Services
-            if (isGPSEnabled) {
-                if (newLocation == null) {
-                    locationListener = LocationListener(applicationContext)
-                    locationManager.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                            locationListener, Looper.getMainLooper())
-                    Log.d(TAG, "GPS is enabled")
-                    newLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                }
-            }
-            handleLocationChanged(newLocation, this)
-        }
+        locationManager.requestLocationUpdates(LOCATION_INTERVAL, LOCATION_DISTANCE, criteria,
+                locationListener, Looper.getMainLooper())
     }
 
     inner class LocationListener(private val context: Context) : android.location.LocationListener {

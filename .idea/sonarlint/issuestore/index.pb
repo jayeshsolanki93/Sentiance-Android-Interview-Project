@@ -12,6 +12,4 @@ Xapp/src/main/java/com/jayeshsolanki/sentiance/geofenceexercise/utils/Preference
 ~
 Napp/src/main/java/com/jayeshsolanki/sentiance/geofenceexercise/MainActivity.kt,5/2/52196e6ff07b5e5ea6b1768ebe644877369704c8
 ~
-Napp/src/main/java/com/jayeshsolanki/sentiance/geofenceexercise/MapsActivity.kt,d/5/d51a85325d9f7319038bee2becd314aa21c073c2
-~
 Napp/src/main/java/com/jayeshsolanki/sentiance/geofenceexercise/MyJobService.kt,0/d/0d96eb6993c6d4c6fa8e80b9fca55cd77a7c7475
