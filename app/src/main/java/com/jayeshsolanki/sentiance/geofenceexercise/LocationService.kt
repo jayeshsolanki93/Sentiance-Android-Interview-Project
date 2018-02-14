@@ -65,7 +65,7 @@ class LocationService : JobService() {
 
         val criteria = Criteria()
         criteria.accuracy = Criteria.ACCURACY_FINE // for adequate accuracy
-        criteria.powerRequirement = Criteria.POWER_HIGH // consumes battery more
+        criteria.powerRequirement = Criteria.POWER_MEDIUM // consumes some battery
         criteria.isCostAllowed = true // use data packets for better location
 
         locationManager.requestLocationUpdates(LOCATION_INTERVAL, LOCATION_DISTANCE, criteria,
