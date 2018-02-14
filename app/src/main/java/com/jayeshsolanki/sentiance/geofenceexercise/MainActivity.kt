@@ -1,6 +1,7 @@
 package com.jayeshsolanki.sentiance.geofenceexercise
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 ?: Constants.DEFAULT_GEOFENCE_RADIUS
 
         if (radius != Constants.DEFAULT_GEOFENCE_RADIUS) {
-            radius_distance.setText(radius.toString())
+            radius_distance.setText((radius / 1000).toString())
         }
 
         RxTextView.textChanges(radius_distance)
@@ -59,7 +60,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (!it.isNullOrBlank()) {
                         val newRadius = it.toString().toInt() * 1000 // kms to metres
                         prefs[Constants.PREFS_GEOFENCE_RADIUS] = newRadius
-                        showSnackbar(R.string.radius_change_msg, android.R.string.ok, View.OnClickListener {})
+                        showSnackbar(R.string.radius_change_msg, android.R.string.ok,
+                                View.OnClickListener {})
                     }
                 }
     }
@@ -74,12 +76,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         setPreviousSelectedPosition(googleMap)
         setPositionSelectionClickListener(googleMap)
-    }
 
+        if (checkPermissions()) {
+            map.isMyLocationEnabled = true // Get blue dot on current location.
+        }
+    }
 
     private fun setPreviousSelectedPosition(googleMap: GoogleMap) {
         val prefs = PreferenceHelper.defaultPrefs(this)
@@ -123,7 +129,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 .setService(LocationService::class.java)
                 .setTag(LOCATION_SERVICE_TAG)
                 .setRecurring(true)
-                .setTrigger(Trigger.executionWindow(10, 20))
+                .setTrigger(Trigger.executionWindow(
+                        LOCATION_SERVICE_START_INTERVAL, LOCATION_SERVICE_INTERVAL_TOLERANCE))
                 .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
                 .setLifetime(Lifetime.FOREVER)
                 .setReplaceCurrent(true)
@@ -132,7 +139,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun checkPermissions() = ActivityCompat.checkSelfPermission(this,
-                ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun requestPermissions() {
         val shouldProvideRationale = ActivityCompat.shouldShowRequestPermissionRationale(
@@ -146,6 +153,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -153,6 +161,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         when (requestCode) {
             REQUEST_PERMISSIONS_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
+                    map.isMyLocationEnabled = true
                     startLocationService()
                 } else {
                     showSnackbar(R.string.permission_rationale, android.R.string.ok,
@@ -179,6 +188,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
 
         const val LOCATION_SERVICE_TAG = "SENTIANCE_LOCATION_SERVICE"
+        const val LOCATION_SERVICE_START_INTERVAL = 10
+        const val LOCATION_SERVICE_INTERVAL_TOLERANCE = 20
 
         const val REQUEST_PERMISSIONS_REQUEST_CODE = 100
     }

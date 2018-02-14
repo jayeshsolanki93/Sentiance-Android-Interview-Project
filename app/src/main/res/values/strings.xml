@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">Sentiance GeoFence Exercise</string>
     <string name="permission_rationale">Please grant the required permission</string>
-    <string name="title_activity_maps">Map</string>
+
     <string name="new_location">Your new location is set</string>
     <string name="radius_distance_hint">Enter a distance (in kms) for the geofence</string>
     <string name="radius_change_msg">Geofence radius was changed!</string>
+
+    <string name="entered_geofence_msg">You have entered your geofence</string>
+    <string name="exited_geofence_msg">You have exited your geofence</string>
+
+    <string name="notif_title">Sentiance Geofence Exercise</string>
+
 </resources>

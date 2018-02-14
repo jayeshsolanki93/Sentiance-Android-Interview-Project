@@ -12,6 +12,4 @@ object Constants {
 
     const val DEFAULT_GEOFENCE_RADIUS = 10000 // 10 kms
 
-    const val TWO_MINUTES = 1000 * 60 * 2
-
 }
