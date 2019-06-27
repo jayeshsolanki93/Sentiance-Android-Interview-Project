@@ -1,3 +1,14 @@
+Sentiance Android Interview Project
+
+UPLOAD EDIT:
+-----------------------------
+I gave this interview in Feb 2018 and uploaded this here in June 2019. I got rejected because the implementation was flawed in terms of saving battery (I guess). I am not sharing the problem statement and if Sentiance is still using the same problem statement for their Android interview you shouldn't use this repo as a source of solution (mostly because it have major issues).
+
+I am sharing it cause I spent more than 24 hours on this and in my phone interview I did not get any feedback to improve the implementation.
+So I want to tip off other developers to not waste their time on such assignments.
+
+-----------------------------
+
 Design Approach
 
 1. I haven't made the use of Google Play services for getting the location. I found that `FusedLocationProviderClient` which is a newer API to access location is efficient and it would have been much simpler to use, but it part of the Google Play services.
